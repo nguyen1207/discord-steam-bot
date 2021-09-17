@@ -1,0 +1,30 @@
+{
+  "name": "steam_bot",
+  "version": "1.0.0",
+  "description": "steam bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "devStart": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nguyen1207/discord-steam-bot.git"
+  },
+  "author": "nguyen1207",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nguyen1207/discord-steam-bot/issues"
+  },
+  "homepage": "https://github.com/nguyen1207/discord-steam-bot#readme",
+  "dependencies": {
+    "@discordjs/builders": "^0.6.0",
+    "@discordjs/rest": "^0.1.0-canary.0",
+    "discord-api-types": "^0.23.1",
+    "discord.js": "^13.1.0",
+    "dotenv": "^10.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
+  }
+}
