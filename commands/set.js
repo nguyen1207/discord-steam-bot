@@ -30,13 +30,15 @@ async function fetchSpecialGames() {
 
 async function sendSpecialGamesDaily(client, time, channelId) {
     const channel = await client.channels.fetch(channelId);
+    const minute = time.split(" ")[0];
+    const hour = time.split(" ")[1];
 
     const job = new CronJob(
         time,
         async function () {
             const specials = await fetchSpecialGames();
 
-            const messages = ["**Specials today**\n"];
+            const messages = [`**Specials today** Updated daily at ${hour.padStart(2, "0")}:${minute.padStart(2, "0")}\n`];
 
             specials.forEach((game) => {
                 if (game.id === "cat_dailydeal") {
@@ -75,8 +77,9 @@ async function sendSpecialGamesDaily(client, time, channelId) {
         true,
         "Asia/Saigon"
     );
-
+    
     client.cronJob = job;
+    client.cronJobChannelId = channelId;
 
     job.start();
 }
