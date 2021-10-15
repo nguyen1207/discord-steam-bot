@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
+const Guild = require("../models/Guild.js");
 const sendSpecialGamesDaily = require("../utils/sendSpecialGamesDaily.js");
 
 function findChannelId(client, channelName) {
@@ -32,8 +33,9 @@ module.exports = {
                 .setDescription("Get daily game deals at selected minute")
                 .setRequired(true)
         ),
-        
+
     async execute(interaction) {
+        const guildId = interaction.guildId;
         const client = interaction.client;
         const channelName = interaction.options.getString("channel-name");
         const hour = parseInt(interaction.options.getString("hour"));
@@ -67,6 +69,11 @@ module.exports = {
         }
 
         await sendSpecialGamesDaily(client, time, channelId);
+
+        await Guild.findOneAndReplace(
+            { guildId },
+            { channelId, sentMinute: minute, sentHour: hour }
+        );
 
         await interaction.reply(
             `You have set Channel **${channelName}** to get daily game deals at **${hour
