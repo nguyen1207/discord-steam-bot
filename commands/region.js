@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const Guild = require("../models/Guild.js");
+const getTimezone = require("../utils/getTimezone.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -17,6 +18,12 @@ module.exports = {
     async execute(interaction) {
         const guildId = interaction.guildId;
         const cc = interaction.options.getString("cc");
+        const timezone = getTimezone(cc);
+
+        if(!timezone) {
+            await interaction.reply(`Invalid country code: **${cc}**`);
+            return;
+        }
 
         await Guild.findOneAndUpdate({ guildId }, { region: cc });
 
