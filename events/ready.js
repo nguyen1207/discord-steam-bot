@@ -1,5 +1,5 @@
 const Guild = require("../models/Guild.js");
-const sendSpecialGamesDaily = require("../utils/SendSpecialGamesDaily.js");
+const sendSpecialGamesDaily = require("../utils/sendSpecialGamesDaily.js");
 
 module.exports = {
     name: "ready",
