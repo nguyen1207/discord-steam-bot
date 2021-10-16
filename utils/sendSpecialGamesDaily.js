@@ -4,6 +4,7 @@ const Guild = require("../models/Guild.js");
 
 const formatTime = require("../utils/formatTime.js");
 const formatPrice = require("../utils/formatPrice.js");
+const getTimezone = require("../utils/getTimezone.js");
 
 async function fetchSpecialGames(cc) {
     const res = await fetch(
@@ -41,6 +42,8 @@ async function sendSpecialGamesDaily(client, time, channelId, guildId) {
 
     const guild = await Guild.findOne({ guildId });
     const cc = guild.region;
+
+    const timezone = getTimezone(cc);
 
     const job = new CronJob(
         time,
@@ -89,7 +92,7 @@ async function sendSpecialGamesDaily(client, time, channelId, guildId) {
         },
         null,
         true,
-        "Asia/Saigon"
+        timezone
     );
 
     client.cronJob = job;
