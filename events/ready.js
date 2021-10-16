@@ -21,7 +21,7 @@ module.exports = {
                 if(minute && hour && channelId) {
                     const time = `${minute} ${hour} * * *`;
     
-                    await sendSpecialGamesDaily(client, time, channelId);
+                    await sendSpecialGamesDaily(client, time, channelId, guildId);
                 }
     
                 console.log(minute, hour, channelId);
@@ -29,6 +29,8 @@ module.exports = {
             else {
                 guild = await Guild.create({guildId});
             }
+
+            client.cc = guild.region;
             console.log(guild)
         }
     },

@@ -68,9 +68,9 @@ module.exports = {
             client.cronJob.stop();
         }
 
-        await sendSpecialGamesDaily(client, time, channelId);
+        await sendSpecialGamesDaily(client, time, channelId, guildId);
 
-        await Guild.findOneAndReplace(
+        await Guild.findOneAndUpdate(
             { guildId },
             { channelId, sentMinute: minute, sentHour: hour }
         );

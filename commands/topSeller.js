@@ -1,12 +1,13 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const fetch = require("node-fetch");
 
+const Guild = require("../models/Guild.js");
 const formatTime = require("../utils/formatTime.js");
 const formatPrice = require("../utils/formatPrice.js");
 
-async function fetchBestSellingGames() {
+async function fetchBestSellingGames(cc) {
     const res = await fetch(
-        "https://store.steampowered.com/api/featuredcategories",
+        `https://store.steampowered.com/api/featuredcategories?cc=${cc}`,
         {
             method: "GET",
             headers: {
@@ -27,8 +28,12 @@ module.exports = {
 
     async execute(interaction) {
         await interaction.deferReply();
+        
+        const guildId = interaction.guildId;
+        const guild = await Guild.findOne({ guildId });
+        const cc = guild.region;
 
-        const topSellers = await fetchBestSellingGames();
+        const topSellers = await fetchBestSellingGames(cc);
         console.log(topSellers);
 
         const messages = [];

@@ -1,12 +1,13 @@
 const CronJob = require("cron").CronJob;
 const fetch = require("node-fetch");
+const Guild = require("../models/Guild.js");
 
 const formatTime = require("../utils/formatTime.js");
 const formatPrice = require("../utils/formatPrice.js");
 
-async function fetchSpecialGames() {
+async function fetchSpecialGames(cc) {
     const res = await fetch(
-        "https://store.steampowered.com/api/featuredcategories",
+        `https://store.steampowered.com/api/featuredcategories?cc=${cc}`,
         {
             method: "GET",
             headers: {
@@ -33,15 +34,18 @@ async function fetchSpecialGames() {
     return result;
 }
 
-async function sendSpecialGamesDaily(client, time, channelId) {
+async function sendSpecialGamesDaily(client, time, channelId, guildId) {
     const channel = await client.channels.fetch(channelId);
     const minute = time.split(" ")[0];
     const hour = time.split(" ")[1];
 
+    const guild = await Guild.findOne({ guildId });
+    const cc = guild.region;
+
     const job = new CronJob(
         time,
         async function () {
-            const specials = await fetchSpecialGames();
+            const specials = await fetchSpecialGames(cc);
 
             const messages = [
                 `**Specials today** Updated daily at ${hour.padStart(

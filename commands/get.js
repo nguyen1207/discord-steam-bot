@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const fetch = require("node-fetch");
 const getDistance = require("../utils/editDistance.js");
+const Guild = require("../models/Guild.js");
 
 async function fetchGameList() {
     const gameListUrl =
@@ -27,10 +28,10 @@ function getMatchedGame(gameList, title) {
     return matchedGames;
 }
 
-async function fetchGamesPrice(gameIds) {
+async function fetchGamesPrice(gameIds, cc) {
     const gameIdsParameter = gameIds.join(",");
 
-    const gamesPriceOverviewUrl = `https://store.steampowered.com/api/appdetails?appids=${gameIdsParameter}&filters=price_overview`;
+    const gamesPriceOverviewUrl = `https://store.steampowered.com/api/appdetails?appids=${gameIdsParameter}&filters=price_overview&cc=${cc}`;
     const res = await fetch(gamesPriceOverviewUrl);
 
     const gamesPriceData = await res.json();
@@ -38,8 +39,8 @@ async function fetchGamesPrice(gameIds) {
     return gamesPriceData;
 }
 
-async function fetchGameDetails(gameId) {
-    const gameDetailsUrl = `https://store.steampowered.com/api/appdetails?appids=${gameId}`;
+async function fetchGameDetails(gameId, cc) {
+    const gameDetailsUrl = `https://store.steampowered.com/api/appdetails?appids=${gameId}&cc=${cc}`;
     const res = await fetch(gameDetailsUrl);
 
     const data = await res.json();
@@ -72,6 +73,10 @@ module.exports = {
     async execute(interaction) {
         await interaction.deferReply();
 
+        const guildId = interaction.guildId;
+        const guild = await Guild.findOne({ guildId });
+        const cc = guild.region;
+
         // Get game title and remove extra spaces
         const title = interaction.options
             .getString("title")
@@ -81,7 +86,7 @@ module.exports = {
         const gameList = await fetchGameList();
 
         const matchedGames = getMatchedGame(gameList, title);
-        
+
         // Sort best matched game
         matchedGames.sort(
             (firstGame, secondGame) => firstGame.distance - secondGame.distance
@@ -99,7 +104,7 @@ module.exports = {
             gameIds.push(game.appid);
         }
 
-        const gamesPriceData = await fetchGamesPrice(gameIds);
+        const gamesPriceData = await fetchGamesPrice(gameIds, cc);
 
         // Get game price
         for (let gameId in gamesPriceData) {
@@ -113,7 +118,7 @@ module.exports = {
             if (!priceOverview) {
                 for (const game of top20MatchedGames) {
                     if (game.appid == gameId) {
-                        const gameDetails = await fetchGameDetails(gameId);
+                        const gameDetails = await fetchGameDetails(gameId, cc);
 
                         if (!gameDetails.success) continue;
 
@@ -138,7 +143,7 @@ module.exports = {
 
         // Messages will be send to client
         let messages = ["**Hehe! I got some stuff for you**\n"];
-        
+
         for (const game of top20MatchedGames) {
             if (!game.finalPrice) continue;
 
