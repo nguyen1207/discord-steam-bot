@@ -23,15 +23,10 @@ module.exports = {
     
                     await sendSpecialGamesDaily(client, time, channelId, guildId);
                 }
-    
-                console.log(minute, hour, channelId);
             }
             else {
                 guild = await Guild.create({guildId});
             }
-
-            client.cc = guild.region;
-            console.log(guild)
         }
     },
 };

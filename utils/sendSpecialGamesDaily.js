@@ -95,7 +95,7 @@ async function sendSpecialGamesDaily(client, time, channelId, guildId) {
         timezone
     );
 
-    client.cronJob = job;
+    client[guildId] = job;
 
     job.start();
 }

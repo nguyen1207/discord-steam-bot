@@ -64,8 +64,8 @@ module.exports = {
         }
 
         // If user modify time
-        if (client.cronJob) {
-            client.cronJob.stop();
+        if (client[guildId]) {
+            client[guildId].stop();
         }
 
         await sendSpecialGamesDaily(client, time, channelId, guildId);
