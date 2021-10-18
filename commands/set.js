@@ -3,10 +3,14 @@ const { SlashCommandBuilder } = require("@discordjs/builders");
 const Guild = require("../models/Guild.js");
 const sendSpecialGamesDaily = require("../utils/sendSpecialGamesDaily.js");
 
-function findChannelId(client, channelName) {
+function findChannelId(client, channelName, guildId) {
     const channels = client.channels.cache;
 
-    const channel = channels.find((channel) => channel.name === channelName);
+    const channel = channels.find((channel) => {
+        if(channel.guildId === guildId) {
+            return channel.name === channelName;
+        }
+    });
 
     return channel ? channel.id : null;
 }
