@@ -60,7 +60,7 @@ module.exports = {
         }
 
         const time = `${minute} ${hour} * * *`;
-        const channelId = findChannelId(client, channelName);
+        const channelId = findChannelId(client, channelName, guildId);
 
         if (!channelId) {
             await interaction.reply("Not found channel");
