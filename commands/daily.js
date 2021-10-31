@@ -22,11 +22,16 @@ module.exports = {
 
         const guildId = interaction.guildId;
         const guild = await Guild.findOne({ guildId });
-        const { sentMinute: minute, sentHour: hour, channelId } = guild;
+        const { channelId } = guild;
+        
+        const time = client[guildId]?.cronTime.source;
+        const minute = time?.split(" ")[0];
+        const hour = time?.split(" ")[1];
+        console.log(minute, hour);
 		
         if (
-            minute === null &&
-            hour === null &&
+            minute === undefined &&
+            hour === undefined &&
             !channelId
         ) {
             const message = `You have not select time and channel to receive daily game deals. Use **/set** command to set up`;
@@ -37,10 +42,10 @@ module.exports = {
 
         const channelName = getChannelName(channelId, client);
 
-        const message = `Get game deals everyday in Channel **${channelName}** at **${hour.toString().padStart(
+        const message = `Get game deals everyday in Channel **${channelName}** at **${hour.padStart(
             2,
             "0"
-        )}:${minute.toString().padStart(2, "0")}**`;
+        )}:${minute.padStart(2, "0")}**`;
         await interaction.reply(message);
     },
 };
